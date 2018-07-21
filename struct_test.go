@@ -5,11 +5,17 @@ import (
 	"testing"
 )
 
+const (
+	strTest = "test"
+)
+
 var (
 	errTest = errors.New("test error")
 )
 
-type testStruct struct{}
+type testStruct struct {
+	str string
+}
 
 func (t testStruct) VMethod()  {}
 func (t *testStruct) PMethod() {}
@@ -18,6 +24,11 @@ func (t *testStruct) Params(string, int, error) {}
 
 func (t *testStruct) Returns() (string, int, error) {
 	return "", 0, nil
+}
+
+func (t *testStruct) Call(str string) error {
+	t.str = str
+	return errTest
 }
 
 func TestBadStruct(t *testing.T) {
@@ -128,13 +139,42 @@ func TestReturns(t *testing.T) {
 func TestError(t *testing.T) {
 	s := Struct(&testStruct{})
 	s.err = errTest
-	if err := s.
+	if _, err := s.
 		Method("42").
 		Param(3, "").
 		Params().
 		Return(3, "").
 		Returns().
-		Error(); err != errTest {
+		Call(); err != errTest {
 		t.Fatalf("%v != %v", err, errTest)
+	}
+}
+
+func TestBadCall(t *testing.T) {
+	if _, err := Struct(&testStruct{}).Call(strTest); err != errMethodNotSelected {
+		t.Fatalf("%v != %v", err, errMethodNotSelected)
+	}
+}
+
+func TestCall(t *testing.T) {
+	r, err := Struct(&testStruct{}).
+		Method("Call").
+		Params(strTest).
+		Returns(ErrorType).
+		Call(strTest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = r[0].(error); err != errTest {
+		t.Fatalf("%v != %v", err, errTest)
+	}
+}
+
+func TestSafeCall(t *testing.T) {
+	if _, err := Struct(&testStruct{}).Method("Call").SafeCall(); err != errParamCount {
+		t.Fatalf("%v != %v", err, errParamCount)
+	}
+	if _, err := Struct(&testStruct{}).Method("Call").SafeCall(strTest); err != nil {
+		t.Fatal(err)
 	}
 }

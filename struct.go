@@ -7,12 +7,6 @@ import (
 
 type selType int
 
-const (
-	stStruct selType = iota
-	stMethod
-	stParam
-)
-
 var (
 	errMustBeStruct = errors.New("parameter must be a struct or pointer to struct")
 
@@ -50,7 +44,6 @@ func typeAwareComparison(t reflect.Type, v interface{}) bool {
 
 // StructMeta provides methods for struct introspection.
 type StructMeta struct {
-	selType     selType
 	structType  reflect.Type
 	structValue reflect.Value
 	method      reflect.Method
@@ -70,7 +63,6 @@ func Struct(v interface{}) *StructMeta {
 		err = errMustBeStruct
 	}
 	return &StructMeta{
-		selType:     stStruct,
 		structType:  reflect.TypeOf(v),
 		structValue: reflect.ValueOf(v),
 		err:         err,
@@ -84,7 +76,6 @@ func (s *StructMeta) Method(name string) *StructMeta {
 	}
 	m, ok := s.structType.MethodByName(name)
 	if ok {
-		s.selType = stMethod
 		s.method = m
 	} else {
 		s.err = errMethodDoesNotExist
@@ -97,7 +88,7 @@ func (s *StructMeta) Param(i int, v interface{}) *StructMeta {
 	if s.err != nil {
 		return s
 	}
-	if s.selType != stMethod {
+	if s.method.Type == nil {
 		s.err = errMethodNotSelected
 		return s
 	}
@@ -117,7 +108,7 @@ func (s *StructMeta) Params(v ...interface{}) *StructMeta {
 	if s.err != nil {
 		return s
 	}
-	if s.selType != stMethod {
+	if s.method.Type == nil {
 		s.err = errMethodNotSelected
 		return s
 	}
@@ -143,7 +134,7 @@ func (s *StructMeta) Return(i int, v interface{}) *StructMeta {
 	if s.err != nil {
 		return s
 	}
-	if s.selType != stMethod {
+	if s.method.Type == nil {
 		s.err = errMethodNotSelected
 		return s
 	}
@@ -163,7 +154,7 @@ func (s *StructMeta) Returns(v ...interface{}) *StructMeta {
 	if s.err != nil {
 		return s
 	}
-	if s.selType != stMethod {
+	if s.method.Type == nil {
 		s.err = errMethodNotSelected
 		return s
 	}
@@ -187,4 +178,31 @@ func (s *StructMeta) Returns(v ...interface{}) *StructMeta {
 // Error returns an error that occurred (if any).
 func (s *StructMeta) Error() error {
 	return s.err
+}
+
+// Call invokes the selected method.
+func (s *StructMeta) Call(v ...interface{}) ([]interface{}, error) {
+	if s.err != nil {
+		return nil, s.err
+	}
+	if s.method.Type == nil {
+		return nil, errMethodNotSelected
+	}
+	params := make([]reflect.Value, len(v))
+	for i, p := range v {
+		params[i] = reflect.ValueOf(p)
+	}
+	var (
+		rVals = s.structValue.MethodByName(s.method.Name).Call(params)
+		ret   = make([]interface{}, len(rVals))
+	)
+	for i, r := range rVals {
+		ret[i] = r.Interface()
+	}
+	return ret, nil
+}
+
+// SafeCall invokes the selected method but also confirms that the supplied parameter types are valid.
+func (s *StructMeta) SafeCall(v ...interface{}) ([]interface{}, error) {
+	return s.Params(v...).Call(v...)
 }
