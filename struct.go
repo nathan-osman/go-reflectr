@@ -43,7 +43,7 @@ var (
 func typeAwareComparison(t reflect.Type, v interface{}) bool {
 	vType := reflect.TypeOf(v)
 	if vType.Kind() == reflect.Ptr && vType.Implements(typeType) {
-		return t.Implements(v.(reflect.Type))
+		return t == v.(reflect.Type)
 	}
 	return t == vType
 }
