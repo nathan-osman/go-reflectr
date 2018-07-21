@@ -28,6 +28,26 @@ var (
 	errReturnCount         = errors.New("return count mismatch")
 )
 
+// Interface accepts a nil pointer to an interface and returns a value that can be passed as a type to the introspection methods.
+func Interface(v interface{}) interface{} {
+	return reflect.TypeOf(v).Elem()
+}
+
+var (
+	typeType = reflect.TypeOf((*reflect.Type)(nil)).Elem()
+
+	// ErrorType may be specified wherever a type variable is expected.
+	ErrorType = Interface((*error)(nil))
+)
+
+func typeAwareComparison(t reflect.Type, v interface{}) bool {
+	vType := reflect.TypeOf(v)
+	if vType.Kind() == reflect.Ptr && vType.Implements(typeType) {
+		return t.Implements(v.(reflect.Type))
+	}
+	return t == vType
+}
+
 // StructMeta provides methods for struct introspection.
 type StructMeta struct {
 	selType     selType
@@ -86,7 +106,7 @@ func (s *StructMeta) Param(i int, v interface{}) *StructMeta {
 		s.err = errInvalidParamOffset
 		return s
 	}
-	if reflect.TypeOf(v) != methodType.In(i+1) {
+	if !typeAwareComparison(methodType.In(i+1), v) {
 		s.err = errParamType
 	}
 	return s
@@ -110,7 +130,7 @@ func (s *StructMeta) Params(v ...interface{}) *StructMeta {
 		return s
 	}
 	for i := 0; i < paramCount; i++ {
-		if reflect.TypeOf(v[i]) != methodType.In(i+1) {
+		if !typeAwareComparison(methodType.In(i+1), v[i]) {
 			s.err = errParamType
 			break
 		}
@@ -132,7 +152,7 @@ func (s *StructMeta) Return(i int, v interface{}) *StructMeta {
 		s.err = errInvalidReturnOffset
 		return s
 	}
-	if reflect.TypeOf(v) != methodType.Out(i) {
+	if !typeAwareComparison(methodType.Out(i), v) {
 		s.err = errReturnType
 	}
 	return s
@@ -156,7 +176,7 @@ func (s *StructMeta) Returns(v ...interface{}) *StructMeta {
 		return s
 	}
 	for i := 0; i < returnCount; i++ {
-		if reflect.TypeOf(v[i]) != methodType.Out(i) {
+		if !typeAwareComparison(methodType.Out(i), v[i]) {
 			s.err = errReturnType
 			break
 		}

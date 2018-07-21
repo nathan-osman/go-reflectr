@@ -14,10 +14,10 @@ type testStruct struct{}
 func (t testStruct) VMethod()  {}
 func (t *testStruct) PMethod() {}
 
-func (t *testStruct) Params(string, int, bool) {}
+func (t *testStruct) Params(string, int, error) {}
 
-func (t *testStruct) Returns() (string, int, bool) {
-	return "", 0, false
+func (t *testStruct) Returns() (string, int, error) {
+	return "", 0, nil
 }
 
 func TestBadStruct(t *testing.T) {
@@ -84,7 +84,7 @@ func TestBadParams(t *testing.T) {
 }
 
 func TestParams(t *testing.T) {
-	if err := Struct(&testStruct{}).Method("Params").Params("", 0, false).Error(); err != nil {
+	if err := Struct(&testStruct{}).Method("Params").Params("", 0, ErrorType).Error(); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -120,7 +120,7 @@ func TestBadReturns(t *testing.T) {
 }
 
 func TestReturns(t *testing.T) {
-	if err := Struct(&testStruct{}).Method("Returns").Returns("", 0, false).Error(); err != nil {
+	if err := Struct(&testStruct{}).Method("Returns").Returns("", 0, ErrorType).Error(); err != nil {
 		t.Fatal(err)
 	}
 }
