@@ -66,7 +66,7 @@ reflectr.Interface((*io.Reader)(nil))
 This function returns a special value that can be passed to methods (like `Param`). An `error` can be specified using `reflectr.ErrorType`:
 
 ```go
-reflectr.Struct(file).Method("Read").Return(1, ErrorType)
+reflectr.Struct(file).Method("Read").Return(1, reflectr.ErrorType)
 ```
 
 #### Errors
