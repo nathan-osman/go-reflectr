@@ -180,13 +180,11 @@ func (s *StructMeta) Error() error {
 	return s.err
 }
 
-// Call invokes the selected method.
+// Call invokes the selected method, checking to ensure parameter types match the method.
 func (s *StructMeta) Call(v ...interface{}) ([]interface{}, error) {
+	s.Params(v...)
 	if s.err != nil {
 		return nil, s.err
-	}
-	if s.method.Type == nil {
-		return nil, errMethodNotSelected
 	}
 	params := make([]reflect.Value, len(v))
 	for i, p := range v {
@@ -200,9 +198,4 @@ func (s *StructMeta) Call(v ...interface{}) ([]interface{}, error) {
 		ret[i] = r.Interface()
 	}
 	return ret, nil
-}
-
-// SafeCall invokes the selected method but also confirms that the supplied parameter types are valid.
-func (s *StructMeta) SafeCall(v ...interface{}) ([]interface{}, error) {
-	return s.Params(v...).Call(v...)
 }

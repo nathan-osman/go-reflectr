@@ -83,10 +83,10 @@ This will return `nil` if the method exists and accepts an `int` as its first pa
 
 #### Invoking Methods
 
-Once a method is selected using `Method`, it can be invoked using either `Call` or `SafeCall`. The former will not perform any parameter checks while the latter will verify that the parameters are accepted by the method:
+Once a method is selected using `Method`, it can be invoked using `Call`. The method will verify that the parameter types are accepted by the method:
 
 ```go
-r, err := reflectr.Struct(file).Method("Read").SafeCall(1024, 500)
+r, err := reflectr.Struct(file).Method("Read").Call(1024, 500)
 ```
 
 The first return value is an `[]interface` containing the values returned by the method.

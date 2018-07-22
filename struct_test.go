@@ -139,20 +139,20 @@ func TestReturns(t *testing.T) {
 func TestError(t *testing.T) {
 	s := Struct(&testStruct{})
 	s.err = errTest
-	if _, err := s.
+	if err := s.
 		Method("42").
 		Param(3, "").
 		Params().
 		Return(3, "").
 		Returns().
-		Call(); err != errTest {
+		Error(); err != errTest {
 		t.Fatalf("%v != %v", err, errTest)
 	}
 }
 
 func TestBadCall(t *testing.T) {
-	if _, err := Struct(&testStruct{}).Call(strTest); err != errMethodNotSelected {
-		t.Fatalf("%v != %v", err, errMethodNotSelected)
+	if _, err := Struct(&testStruct{}).Method("Call").Call(); err != errParamCount {
+		t.Fatalf("%v != %v", err, errParamCount)
 	}
 }
 
@@ -167,14 +167,5 @@ func TestCall(t *testing.T) {
 	}
 	if err = r[0].(error); err != errTest {
 		t.Fatalf("%v != %v", err, errTest)
-	}
-}
-
-func TestSafeCall(t *testing.T) {
-	if _, err := Struct(&testStruct{}).Method("Call").SafeCall(); err != errParamCount {
-		t.Fatalf("%v != %v", err, errParamCount)
-	}
-	if _, err := Struct(&testStruct{}).Method("Call").SafeCall(strTest); err != nil {
-		t.Fatal(err)
 	}
 }
