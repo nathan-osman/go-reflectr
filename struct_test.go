@@ -1,7 +1,17 @@
 package reflectr
 
 import (
+	"errors"
 	"testing"
+)
+
+const (
+	strTest = "test"
+	intTest = 42
+)
+
+var (
+	errTest = errors.New("test")
 )
 
 type testStructStruct struct{}

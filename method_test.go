@@ -1,14 +1,7 @@
 package reflectr
 
 import (
-	"errors"
 	"testing"
-)
-
-var (
-	strTest = "test"
-	intTest = 42
-	errTest = errors.New("test")
 )
 
 type testBadMethodStruct struct{}
