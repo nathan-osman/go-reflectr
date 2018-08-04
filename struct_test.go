@@ -34,13 +34,15 @@ func TestStruct(t *testing.T) {
 func TestError(t *testing.T) {
 	s := Struct(&testStructStruct{})
 	s.err = errTest
-	if err := s.
+	if _, err := s.
 		Method("42").
 		Param(3, "").
 		Params().
 		Return(3, "").
 		Returns().
-		Error(); err != errTest {
+		Field("42").
+		Type("").
+		Value(); err != errTest {
 		t.Fatalf("%v != %v", err, errTest)
 	}
 }
