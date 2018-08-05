@@ -9,8 +9,8 @@ var (
 	errFieldDoesNotExist = errors.New("field does not exist")
 	errFieldNotSelected  = errors.New("field not selected")
 
-	errFieldType       = errors.New("field type mismatch")
-	errFieldUnexported = errors.New("field is unexported")
+	errFieldType     = errors.New("field type mismatch")
+	errFieldReadOnly = errors.New("field is read-only")
 )
 
 // Field ensures that the specified field exists and selects it.
@@ -53,7 +53,7 @@ func (s *StructMeta) SetValue(v interface{}) *StructMeta {
 		return s
 	}
 	if !s.field.CanSet() {
-		s.err = errFieldUnexported
+		s.err = errFieldReadOnly
 		return s
 	}
 	s.field.Set(reflect.ValueOf(v))

@@ -60,8 +60,8 @@ func TestBadSetValue(t *testing.T) {
 	if err := Struct(&testFieldStruct{}).
 		Field("field0").
 		SetValue("").
-		Error(); err != errFieldUnexported {
-		t.Fatalf("%v != %v", err, errFieldUnexported)
+		Error(); err != errFieldReadOnly {
+		t.Fatalf("%v != %v", err, errFieldReadOnly)
 	}
 }
 
