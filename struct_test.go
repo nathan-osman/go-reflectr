@@ -42,6 +42,7 @@ func TestError(t *testing.T) {
 		Returns().
 		Field("42").
 		Type("").
+		SetValue("").
 		Value(); err != errTest {
 		t.Fatalf("%v != %v", err, errTest)
 	}

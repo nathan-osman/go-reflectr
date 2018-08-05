@@ -5,6 +5,7 @@ import (
 )
 
 type testFieldStruct struct {
+	field0 string
 	Field1 string
 	Field2 int
 	Field3 error
@@ -52,6 +53,38 @@ func TestType(t *testing.T) {
 		Type(ErrorType).
 		Error(); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestBadSetValue(t *testing.T) {
+	if err := Struct(&testFieldStruct{}).
+		Field("field0").
+		SetValue("").
+		Error(); err != errFieldUnexported {
+		t.Fatalf("%v != %v", err, errFieldUnexported)
+	}
+}
+
+func TestSetValue(t *testing.T) {
+	s := &testFieldStruct{}
+	if err := Struct(s).
+		Field("Field1").
+		SetValue(strTest).
+		Field("Field2").
+		SetValue(intTest).
+		Field("Field3").
+		SetValue(errTest).
+		Error(); err != nil {
+		t.Fatal(err)
+	}
+	if s.Field1 != strTest {
+		t.Fatalf("%v != %v", s.Field1, strTest)
+	}
+	if s.Field2 != intTest {
+		t.Fatalf("%v != %v", s.Field2, intTest)
+	}
+	if s.Field3 != errTest {
+		t.Fatalf("%v != %v", s.Field3, errTest)
 	}
 }
 
