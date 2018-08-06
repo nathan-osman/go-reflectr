@@ -13,6 +13,21 @@ var (
 	errFieldReadOnly = errors.New("field is read-only")
 )
 
+// Fields returns a list of field names in the struct.
+func (s *StructMeta) Fields() []string {
+	t := s.structType
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	fields := []string{}
+	for i := 0; i < t.NumField(); i++ {
+		if len(t.Field(i).PkgPath) == 0 {
+			fields = append(fields, t.Field(i).Name)
+		}
+	}
+	return fields
+}
+
 // Field ensures that the specified field exists and selects it.
 func (s *StructMeta) Field(name string) *StructMeta {
 	if s.err != nil {

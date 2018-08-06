@@ -1,6 +1,7 @@
 package reflectr
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -9,6 +10,16 @@ type testFieldStruct struct {
 	Field1 string
 	Field2 int
 	Field3 error
+}
+
+func TestFields(t *testing.T) {
+	var (
+		sFields = Struct(&testFieldStruct{}).Fields()
+		cFields = []string{"Field1", "Field2", "Field3"}
+	)
+	if !reflect.DeepEqual(sFields, cFields) {
+		t.Fatalf("%v != %v", sFields, cFields)
+	}
 }
 
 func TestBadField(t *testing.T) {
