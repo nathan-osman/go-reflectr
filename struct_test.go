@@ -31,6 +31,15 @@ func TestStruct(t *testing.T) {
 	}
 }
 
+func TestIsPtr(t *testing.T) {
+	if Struct(testStructStruct{}).IsPtr() == true {
+		t.Fatal("IsPtr returned true")
+	}
+	if Struct(&testStructStruct{}).IsPtr() == false {
+		t.Fatal("IsPtr returned false")
+	}
+}
+
 func TestError(t *testing.T) {
 	s := Struct(&testStructStruct{})
 	s.err = errTest

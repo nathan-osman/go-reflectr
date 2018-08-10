@@ -35,6 +35,11 @@ func Struct(v interface{}) *StructMeta {
 	}
 }
 
+// IsPtr determines whether a struct or a pointer to struct was provided to the Struct function.
+func (s *StructMeta) IsPtr() bool {
+	return s.structType.Kind() == reflect.Ptr
+}
+
 // Error returns an error that occurred (if any).
 func (s *StructMeta) Error() error {
 	return s.err
