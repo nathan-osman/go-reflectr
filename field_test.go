@@ -67,38 +67,6 @@ func TestType(t *testing.T) {
 	}
 }
 
-func TestBadSetValue(t *testing.T) {
-	if err := Struct(&testFieldStruct{}).
-		Field("field0").
-		SetValue("").
-		Error(); err != errFieldReadOnly {
-		t.Fatalf("%v != %v", err, errFieldReadOnly)
-	}
-}
-
-func TestSetValue(t *testing.T) {
-	s := &testFieldStruct{}
-	if err := Struct(s).
-		Field("Field1").
-		SetValue(strTest).
-		Field("Field2").
-		SetValue(intTest).
-		Field("Field3").
-		SetValue(errTest).
-		Error(); err != nil {
-		t.Fatal(err)
-	}
-	if s.Field1 != strTest {
-		t.Fatalf("%v != %v", s.Field1, strTest)
-	}
-	if s.Field2 != intTest {
-		t.Fatalf("%v != %v", s.Field2, intTest)
-	}
-	if s.Field3 != errTest {
-		t.Fatalf("%v != %v", s.Field3, errTest)
-	}
-}
-
 func TestBadValue(t *testing.T) {
 	if _, err := Struct(&testFieldStruct{}).
 		Value(); err != errFieldNotSelected {
@@ -126,5 +94,39 @@ func TestValue(t *testing.T) {
 		t.Fatal(err)
 	} else if v.(error) != errTest {
 		t.Fatalf("%v != %v", v.(error), errTest)
+	}
+}
+
+func TestBadAddr(t *testing.T) {
+	if _, err := Struct(&testFieldStruct{}).
+		Addr(); err != errFieldNotSelected {
+		t.Fatalf("%v != %v", err, errFieldNotSelected)
+	}
+	if _, err := Struct(testFieldStruct{}).
+		Field("Field1").
+		Addr(); err != errFieldReadOnly {
+		t.Fatalf("%v != %v", err, errFieldReadOnly)
+	}
+}
+
+func TestAddr(t *testing.T) {
+	var (
+		f = &testFieldStruct{}
+		s = Struct(f)
+	)
+	if v, err := s.Field("Field1").Addr(); err != nil {
+		t.Fatal(err)
+	} else if *v.(*string) = strTest; f.Field1 != strTest {
+		t.Fatalf("%v != %v", f.Field1, strTest)
+	}
+	if v, err := s.Field("Field2").Addr(); err != nil {
+		t.Fatal(err)
+	} else if *v.(*int) = intTest; f.Field2 != intTest {
+		t.Fatalf("%v != %v", f.Field2, intTest)
+	}
+	if v, err := s.Field("Field3").Addr(); err != nil {
+		t.Fatal(err)
+	} else if *v.(*error) = errTest; f.Field3 != errTest {
+		t.Fatalf("%v != %v", f.Field3, errTest)
 	}
 }

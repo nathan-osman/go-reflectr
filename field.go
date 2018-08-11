@@ -61,20 +61,6 @@ func (s *StructMeta) Type(v interface{}) *StructMeta {
 	return s
 }
 
-// SetValue sets the value of the currently selected field.
-func (s *StructMeta) SetValue(v interface{}) *StructMeta {
-	s.Type(v)
-	if s.err != nil {
-		return s
-	}
-	if !s.field.CanSet() {
-		s.err = errFieldReadOnly
-		return s
-	}
-	s.field.Set(reflect.ValueOf(v))
-	return s
-}
-
 // Value retrieves the value of the selected field.
 func (s *StructMeta) Value() (interface{}, error) {
 	if s.err != nil {
@@ -84,4 +70,19 @@ func (s *StructMeta) Value() (interface{}, error) {
 		return nil, errFieldNotSelected
 	}
 	return s.field.Interface(), nil
+}
+
+// Addr retrieves a pointer to the selected field.
+// This method will return an error if the field is read-only.
+func (s *StructMeta) Addr() (interface{}, error) {
+	if s.err != nil {
+		return nil, s.err
+	}
+	if !s.field.IsValid() {
+		return nil, errFieldNotSelected
+	}
+	if !s.field.CanAddr() {
+		return nil, errFieldReadOnly
+	}
+	return s.field.Addr().Interface(), nil
 }

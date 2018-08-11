@@ -43,7 +43,7 @@ func TestIsPtr(t *testing.T) {
 func TestError(t *testing.T) {
 	s := Struct(&testStructStruct{})
 	s.err = errTest
-	if _, err := s.
+	if err := s.
 		Method("42").
 		Param(3, "").
 		Params().
@@ -51,8 +51,13 @@ func TestError(t *testing.T) {
 		Returns().
 		Field("42").
 		Type("").
-		SetValue("").
-		Value(); err != errTest {
+		Error(); err != errTest {
+		t.Fatalf("%v != %v", err, errTest)
+	}
+	if _, err := s.Value(); err != errTest {
+		t.Fatalf("%v != %v", err, errTest)
+	}
+	if _, err := s.Addr(); err != errTest {
 		t.Fatalf("%v != %v", err, errTest)
 	}
 }
