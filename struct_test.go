@@ -20,6 +20,10 @@ func TestBadStruct(t *testing.T) {
 	if err := Struct(42).Error(); err != errMustBeStruct {
 		t.Fatalf("%v != %v", err, errMustBeStruct)
 	}
+	v := ""
+	if err := Struct(&v).Error(); err != errMustBeStruct {
+		t.Fatalf("%v != %v", err, errMustBeStruct)
+	}
 }
 
 func TestStruct(t *testing.T) {
