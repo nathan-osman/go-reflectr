@@ -5,7 +5,10 @@ import (
 	"reflect"
 )
 
-var errMustBeStruct = errors.New("parameter must be a struct or pointer to struct")
+var (
+	// ErrMustBeStruct indicates that an invalid type was passed to Struct().
+	ErrMustBeStruct = errors.New("parameter must be a struct or pointer to struct")
+)
 
 // StructMeta provides methods for struct introspection.
 type StructMeta struct {
@@ -26,7 +29,7 @@ func Struct(v interface{}) *StructMeta {
 		structType = structType.Elem()
 	}
 	if structType.Kind() != reflect.Struct {
-		err = errMustBeStruct
+		err = ErrMustBeStruct
 	}
 	return &StructMeta{
 		structType:  reflect.TypeOf(v),

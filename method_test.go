@@ -9,8 +9,8 @@ type testBadMethodStruct struct{}
 func TestBadMethod(t *testing.T) {
 	if err := Struct(&testBadMethodStruct{}).
 		Method("42").
-		Error(); err != errMethodDoesNotExist {
-		t.Fatalf("%v != %v", err, errMethodDoesNotExist)
+		Error(); err != ErrMethodDoesNotExist {
+		t.Fatalf("%v != %v", err, ErrMethodDoesNotExist)
 	}
 }
 
@@ -44,20 +44,20 @@ func (*testParamStruct) Method(string, int, error) {}
 func TestBadParamStruct(t *testing.T) {
 	if err := Struct(&testParamStruct{}).
 		Param(0, "").
-		Error(); err != errMethodNotSelected {
-		t.Fatalf("%v != %v", err, errMethodNotSelected)
+		Error(); err != ErrMethodNotSelected {
+		t.Fatalf("%v != %v", err, ErrMethodNotSelected)
 	}
 	if err := Struct(&testParamStruct{}).
 		Method("Method").
 		Param(3, "").
-		Error(); err != errInvalidParamOffset {
-		t.Fatalf("%v != %v", err, errInvalidParamOffset)
+		Error(); err != ErrInvalidParamOffset {
+		t.Fatalf("%v != %v", err, ErrInvalidParamOffset)
 	}
 	if err := Struct(&testParamStruct{}).
 		Method("Method").
 		Param(0, 0).
-		Error(); err != errParamType {
-		t.Fatalf("%v != %v", err, errParamType)
+		Error(); err != ErrParamType {
+		t.Fatalf("%v != %v", err, ErrParamType)
 	}
 }
 
@@ -75,20 +75,20 @@ func TestParam(t *testing.T) {
 func TestBadParams(t *testing.T) {
 	if err := Struct(&testParamStruct{}).
 		Params("", 0, false).
-		Error(); err != errMethodNotSelected {
-		t.Fatalf("%v != %v", err, errMethodNotSelected)
+		Error(); err != ErrMethodNotSelected {
+		t.Fatalf("%v != %v", err, ErrMethodNotSelected)
 	}
 	if err := Struct(&testParamStruct{}).
 		Method("Method").
 		Params("", 0).
-		Error(); err != errParamCount {
-		t.Fatalf("%v != %v", err, errParamCount)
+		Error(); err != ErrParamCount {
+		t.Fatalf("%v != %v", err, ErrParamCount)
 	}
 	if err := Struct(&testParamStruct{}).
 		Method("Method").
 		Params("", 0, 0).
-		Error(); err != errParamType {
-		t.Fatalf("%v != %v", err, errParamType)
+		Error(); err != ErrParamType {
+		t.Fatalf("%v != %v", err, ErrParamType)
 	}
 }
 
@@ -110,20 +110,20 @@ func (*testReturnStruct) Method() (string, int, error) {
 func TestBadReturn(t *testing.T) {
 	if err := Struct(&testReturnStruct{}).
 		Return(0, "").
-		Error(); err != errMethodNotSelected {
-		t.Fatalf("%v != %v", err, errMethodNotSelected)
+		Error(); err != ErrMethodNotSelected {
+		t.Fatalf("%v != %v", err, ErrMethodNotSelected)
 	}
 	if err := Struct(&testReturnStruct{}).
 		Method("Method").
 		Return(3, "").
-		Error(); err != errInvalidReturnOffset {
-		t.Fatalf("%v != %v", err, errInvalidReturnOffset)
+		Error(); err != ErrInvalidReturnOffset {
+		t.Fatalf("%v != %v", err, ErrInvalidReturnOffset)
 	}
 	if err := Struct(&testReturnStruct{}).
 		Method("Method").
 		Return(0, 0).
-		Error(); err != errReturnType {
-		t.Fatalf("%v != %v", err, errReturnType)
+		Error(); err != ErrReturnType {
+		t.Fatalf("%v != %v", err, ErrReturnType)
 	}
 }
 
@@ -141,18 +141,18 @@ func TestReturn(t *testing.T) {
 func TestBadReturns(t *testing.T) {
 	if err := Struct(&testReturnStruct{}).
 		Returns("", 0, false).
-		Error(); err != errMethodNotSelected {
-		t.Fatalf("%v != %v", err, errMethodNotSelected)
+		Error(); err != ErrMethodNotSelected {
+		t.Fatalf("%v != %v", err, ErrMethodNotSelected)
 	}
 	if err := Struct(&testReturnStruct{}).
 		Method("Method").
-		Returns("", 0).Error(); err != errReturnCount {
-		t.Fatalf("%v != %v", err, errReturnCount)
+		Returns("", 0).Error(); err != ErrReturnCount {
+		t.Fatalf("%v != %v", err, ErrReturnCount)
 	}
 	if err := Struct(&testReturnStruct{}).
 		Method("Method").
-		Returns("", 0, 0).Error(); err != errReturnType {
-		t.Fatalf("%v != %v", err, errReturnType)
+		Returns("", 0, 0).Error(); err != ErrReturnType {
+		t.Fatalf("%v != %v", err, ErrReturnType)
 	}
 }
 
@@ -174,8 +174,8 @@ func (*testCallStruct) Method(s string, i int, e error) (string, int, error) {
 func TestBadCall(t *testing.T) {
 	if _, err := Struct(&testCallStruct{}).
 		Method("Method").
-		Call(); err != errParamCount {
-		t.Fatalf("%v != %v", err, errParamCount)
+		Call(); err != ErrParamCount {
+		t.Fatalf("%v != %v", err, ErrParamCount)
 	}
 }
 

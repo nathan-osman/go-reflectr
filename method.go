@@ -6,16 +6,29 @@ import (
 )
 
 var (
-	errMethodDoesNotExist = errors.New("method does not exist")
-	errMethodNotSelected  = errors.New("method not selected")
+	// ErrMethodDoesNotExist indicates that the selected method does not exist.
+	ErrMethodDoesNotExist = errors.New("method does not exist")
 
-	errInvalidParamOffset = errors.New("invalid parameter offset")
-	errParamType          = errors.New("parameter type mismatch")
-	errParamCount         = errors.New("parameter count mismatch")
+	// ErrMethodNotSelected indicates that no method was selected.
+	ErrMethodNotSelected = errors.New("method not selected")
 
-	errInvalidReturnOffset = errors.New("invalid return offset")
-	errReturnType          = errors.New("return type mismatch")
-	errReturnCount         = errors.New("return count mismatch")
+	// ErrInvalidParamOffset indicates that the supplied parameter offset is invalid.
+	ErrInvalidParamOffset = errors.New("invalid parameter offset")
+
+	// ErrParamType indicates that the parameter type does not match.
+	ErrParamType = errors.New("parameter type mismatch")
+
+	// ErrParamCount indicates that an incorrect number of parameter types were supplied.
+	ErrParamCount = errors.New("parameter count mismatch")
+
+	// ErrInvalidReturnOffset indicates that the supplied return offset is invalid.
+	ErrInvalidReturnOffset = errors.New("invalid return offset")
+
+	// ErrReturnType indicates that the return type does not match.
+	ErrReturnType = errors.New("return type mismatch")
+
+	// ErrReturnCount indicates that an incorrect number of return types were supplied.
+	ErrReturnCount = errors.New("return count mismatch")
 )
 
 // Method ensures that the specified method exists and selects it.
@@ -27,7 +40,7 @@ func (s *StructMeta) Method(name string) *StructMeta {
 	if ok {
 		s.method = m
 	} else {
-		s.err = errMethodDoesNotExist
+		s.err = ErrMethodDoesNotExist
 	}
 	return s
 }
@@ -38,16 +51,16 @@ func (s *StructMeta) Param(i int, v interface{}) *StructMeta {
 		return s
 	}
 	if s.method.Type == nil {
-		s.err = errMethodNotSelected
+		s.err = ErrMethodNotSelected
 		return s
 	}
 	methodType := s.method.Type
 	if i+1 >= methodType.NumIn() {
-		s.err = errInvalidParamOffset
+		s.err = ErrInvalidParamOffset
 		return s
 	}
 	if !typeAwareComparison(methodType.In(i+1), v) {
-		s.err = errParamType
+		s.err = ErrParamType
 	}
 	return s
 }
@@ -58,7 +71,7 @@ func (s *StructMeta) Params(v ...interface{}) *StructMeta {
 		return s
 	}
 	if s.method.Type == nil {
-		s.err = errMethodNotSelected
+		s.err = ErrMethodNotSelected
 		return s
 	}
 	var (
@@ -66,12 +79,12 @@ func (s *StructMeta) Params(v ...interface{}) *StructMeta {
 		paramCount = methodType.NumIn() - 1
 	)
 	if len(v) != paramCount {
-		s.err = errParamCount
+		s.err = ErrParamCount
 		return s
 	}
 	for i := 0; i < paramCount; i++ {
 		if !typeAwareComparison(methodType.In(i+1), v[i]) {
-			s.err = errParamType
+			s.err = ErrParamType
 			break
 		}
 	}
@@ -84,16 +97,16 @@ func (s *StructMeta) Return(i int, v interface{}) *StructMeta {
 		return s
 	}
 	if s.method.Type == nil {
-		s.err = errMethodNotSelected
+		s.err = ErrMethodNotSelected
 		return s
 	}
 	methodType := s.method.Type
 	if i >= methodType.NumOut() {
-		s.err = errInvalidReturnOffset
+		s.err = ErrInvalidReturnOffset
 		return s
 	}
 	if !typeAwareComparison(methodType.Out(i), v) {
-		s.err = errReturnType
+		s.err = ErrReturnType
 	}
 	return s
 }
@@ -104,7 +117,7 @@ func (s *StructMeta) Returns(v ...interface{}) *StructMeta {
 		return s
 	}
 	if s.method.Type == nil {
-		s.err = errMethodNotSelected
+		s.err = ErrMethodNotSelected
 		return s
 	}
 	var (
@@ -112,12 +125,12 @@ func (s *StructMeta) Returns(v ...interface{}) *StructMeta {
 		returnCount = methodType.NumOut()
 	)
 	if len(v) != returnCount {
-		s.err = errReturnCount
+		s.err = ErrReturnCount
 		return s
 	}
 	for i := 0; i < returnCount; i++ {
 		if !typeAwareComparison(methodType.Out(i), v[i]) {
-			s.err = errReturnType
+			s.err = ErrReturnType
 			break
 		}
 	}

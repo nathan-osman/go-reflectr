@@ -6,11 +6,17 @@ import (
 )
 
 var (
-	errFieldDoesNotExist = errors.New("field does not exist")
-	errFieldNotSelected  = errors.New("field not selected")
+	// ErrFieldDoesNotExist indicates that the selected field does not exist.
+	ErrFieldDoesNotExist = errors.New("field does not exist")
 
-	errFieldType     = errors.New("field type mismatch")
-	errFieldReadOnly = errors.New("field is read-only")
+	// ErrFieldNotSelected indicates that no field was selected.
+	ErrFieldNotSelected = errors.New("field not selected")
+
+	// ErrFieldType indicates that the field type does not match.
+	ErrFieldType = errors.New("field type mismatch")
+
+	// ErrFieldReadOnly indicates that the field is read-only.
+	ErrFieldReadOnly = errors.New("field is read-only")
 )
 
 // Fields returns a list of field names in the struct.
@@ -41,7 +47,7 @@ func (s *StructMeta) Field(name string) *StructMeta {
 	if f.IsValid() {
 		s.field = f
 	} else {
-		s.err = errFieldDoesNotExist
+		s.err = ErrFieldDoesNotExist
 	}
 	return s
 }
@@ -52,11 +58,11 @@ func (s *StructMeta) Type(v interface{}) *StructMeta {
 		return s
 	}
 	if !s.field.IsValid() {
-		s.err = errFieldNotSelected
+		s.err = ErrFieldNotSelected
 		return s
 	}
 	if !typeAwareComparison(s.field.Type(), v) {
-		s.err = errFieldType
+		s.err = ErrFieldType
 	}
 	return s
 }
@@ -67,7 +73,7 @@ func (s *StructMeta) Value() (interface{}, error) {
 		return nil, s.err
 	}
 	if !s.field.IsValid() {
-		return nil, errFieldNotSelected
+		return nil, ErrFieldNotSelected
 	}
 	return s.field.Interface(), nil
 }
@@ -79,10 +85,10 @@ func (s *StructMeta) Addr() (interface{}, error) {
 		return nil, s.err
 	}
 	if !s.field.IsValid() {
-		return nil, errFieldNotSelected
+		return nil, ErrFieldNotSelected
 	}
 	if !s.field.CanAddr() {
-		return nil, errFieldReadOnly
+		return nil, ErrFieldReadOnly
 	}
 	return s.field.Addr().Interface(), nil
 }

@@ -17,12 +17,12 @@ var (
 type testStructStruct struct{}
 
 func TestBadStruct(t *testing.T) {
-	if err := Struct(42).Error(); err != errMustBeStruct {
-		t.Fatalf("%v != %v", err, errMustBeStruct)
+	if err := Struct(42).Error(); err != ErrMustBeStruct {
+		t.Fatalf("%v != %v", err, ErrMustBeStruct)
 	}
 	v := ""
-	if err := Struct(&v).Error(); err != errMustBeStruct {
-		t.Fatalf("%v != %v", err, errMustBeStruct)
+	if err := Struct(&v).Error(); err != ErrMustBeStruct {
+		t.Fatalf("%v != %v", err, ErrMustBeStruct)
 	}
 }
 

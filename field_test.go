@@ -25,8 +25,8 @@ func TestFields(t *testing.T) {
 func TestBadField(t *testing.T) {
 	if err := Struct(&testFieldStruct{}).
 		Field("42").
-		Error(); err != errFieldDoesNotExist {
-		t.Fatalf("%v != %v", err, errFieldDoesNotExist)
+		Error(); err != ErrFieldDoesNotExist {
+		t.Fatalf("%v != %v", err, ErrFieldDoesNotExist)
 	}
 }
 
@@ -43,14 +43,14 @@ func TestField(t *testing.T) {
 func TestBadType(t *testing.T) {
 	if err := Struct(&testFieldStruct{}).
 		Type(0).
-		Error(); err != errFieldNotSelected {
-		t.Fatalf("%v != %v", err, errFieldNotSelected)
+		Error(); err != ErrFieldNotSelected {
+		t.Fatalf("%v != %v", err, ErrFieldNotSelected)
 	}
 	if err := Struct(&testFieldStruct{}).
 		Field("Field1").
 		Type(0).
-		Error(); err != errFieldType {
-		t.Fatalf("%v != %v", err, errFieldType)
+		Error(); err != ErrFieldType {
+		t.Fatalf("%v != %v", err, ErrFieldType)
 	}
 }
 
@@ -69,8 +69,8 @@ func TestType(t *testing.T) {
 
 func TestBadValue(t *testing.T) {
 	if _, err := Struct(&testFieldStruct{}).
-		Value(); err != errFieldNotSelected {
-		t.Fatalf("%v != %v", err, errFieldNotSelected)
+		Value(); err != ErrFieldNotSelected {
+		t.Fatalf("%v != %v", err, ErrFieldNotSelected)
 	}
 }
 
@@ -99,13 +99,13 @@ func TestValue(t *testing.T) {
 
 func TestBadAddr(t *testing.T) {
 	if _, err := Struct(&testFieldStruct{}).
-		Addr(); err != errFieldNotSelected {
-		t.Fatalf("%v != %v", err, errFieldNotSelected)
+		Addr(); err != ErrFieldNotSelected {
+		t.Fatalf("%v != %v", err, ErrFieldNotSelected)
 	}
 	if _, err := Struct(testFieldStruct{}).
 		Field("Field1").
-		Addr(); err != errFieldReadOnly {
-		t.Fatalf("%v != %v", err, errFieldReadOnly)
+		Addr(); err != ErrFieldReadOnly {
+		t.Fatalf("%v != %v", err, ErrFieldReadOnly)
 	}
 }
 
